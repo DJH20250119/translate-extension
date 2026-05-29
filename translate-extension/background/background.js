@@ -7,15 +7,16 @@ async function getApiKey() {
 }
 
 async function translate(text) {
-  const apiKey = await getApiKey();
-  if (!apiKey) {
-    return { error: 'no_key' };
-  }
-
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
+    const apiKey = await getApiKey();
+    if (!apiKey) {
+      clearTimeout(timer);
+      return { error: 'no_key' };
+    }
+
     const res = await fetch(DEEPSEEK_API, {
       method: 'POST',
       headers: {
@@ -59,11 +60,12 @@ async function translate(text) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'translate') {
-    translate(message.text).then(sendResponse);
+    translate(message.text).then(sendResponse).catch(console.error);
     return true; // keep channel open for async response
   }
   if (message.type === 'openOptions') {
-    chrome.runtime.openOptionsPage();
+    chrome.runtime.openOptionsPage().catch(console.error);
     return false;
   }
+  return false;
 });
