@@ -1,1 +1,69 @@
-/* Content styles */
+#deepseek-trans-popup {
+  display: none;
+  position: absolute;
+  z-index: 2147483647;
+  max-width: 360px;
+  min-width: 120px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.4;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dtp-original {
+  font-size: 13px;
+  color: #a6adc8;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.dtp-translation {
+  font-size: 17px;
+  font-weight: 600;
+  color: #89b4fa;
+  word-break: break-word;
+}
+
+.dtp-footer {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.dtp-copy-btn {
+  padding: 2px 10px;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  background: transparent;
+  color: #a6adc8;
+  font-size: 11px;
+  cursor: pointer;
+  line-height: 1.6;
+}
+
+.dtp-copy-btn:hover {
+  background: #313244;
+  color: #cdd6f4;
+}
+
+.dtp-brand {
+  margin-left: auto;
+  font-size: 10px;
+  color: #585b70;
+}
+
+.dtp-error-link {
+  color: #f9e2af;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dtp-error-link:hover {
+  color: #f38ba8;
+}
