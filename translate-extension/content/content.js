@@ -1,6 +1,7 @@
 (function () {
   let popup = null;
   let loadingTimer = null;
+  let requestSeq = 0;
 
   function isEnglish(text) {
     return /[a-zA-Z]/.test(text);
@@ -30,13 +31,7 @@
     return popup;
   }
 
-  function showPopup(x, y, original, translation) {
-    const p = createPopup();
-    p.querySelector('.dtp-original').textContent = original;
-    p.querySelector('.dtp-translation').textContent = translation;
-    p.style.display = 'block';
-
-    // position near the selection, prefer above
+  function positionPopup(p, x, y) {
     const rect = p.getBoundingClientRect();
     let top = y - rect.height - 12;
     let left = x;
@@ -53,6 +48,14 @@
     p.style.left = left + 'px';
   }
 
+  function showPopup(x, y, original, translation) {
+    const p = createPopup();
+    p.querySelector('.dtp-original').textContent = original;
+    p.querySelector('.dtp-translation').textContent = translation;
+    p.style.display = 'block';
+    positionPopup(p, x, y);
+  }
+
   function hidePopup() {
     if (popup) popup.style.display = 'none';
   }
@@ -63,15 +66,7 @@
     p.querySelector('.dtp-translation').textContent = '翻译中...';
     p.querySelector('.dtp-footer').style.display = 'none';
     p.style.display = 'block';
-
-    const rect = p.getBoundingClientRect();
-    let top = y - rect.height - 12;
-    let left = x;
-    if (top < 8) top = y + 12;
-    if (left + rect.width > window.innerWidth - 8) left = window.innerWidth - rect.width - 8;
-    if (left < 8) left = 8;
-    p.style.top = top + 'px';
-    p.style.left = left + 'px';
+    positionPopup(p, x, y);
   }
 
   function showError(original, errorType) {
@@ -100,6 +95,8 @@
 
     if (!text || text.length < 2 || !isEnglish(text)) return;
 
+    if (selection.rangeCount === 0) return;
+
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
@@ -107,11 +104,16 @@
 
     showLoading(x, y, text);
 
+    const seq = ++requestSeq;
+
     try {
       const response = await chrome.runtime.sendMessage({
         type: 'translate',
         text: text
       });
+
+      // Discard stale responses
+      if (seq !== requestSeq) return;
 
       if (response.error) {
         showError(text, response.error);
@@ -121,11 +123,13 @@
         p.querySelector('.dtp-footer').style.display = '';
       }
     } catch (err) {
+      if (seq !== requestSeq) return;
       showError(text, 'api_error');
     }
   }
 
-  document.addEventListener('mouseup', () => {
+  document.addEventListener('mouseup', (e) => {
+    if (popup && popup.contains(e.target)) return;
     setTimeout(handleSelection, 10);
   });
 

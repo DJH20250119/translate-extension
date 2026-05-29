@@ -17,7 +17,7 @@
     },
     "default_title": "__MSG_extName__"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "clipboardWrite"],
   "host_permissions": ["https://api.deepseek.com/*"],
   "background": {
     "service_worker": "background/background.js"
