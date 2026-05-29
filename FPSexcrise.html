@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>FPS 瞄准训练器</title>
+  <style>
+    body {
+      margin: 0;
+      background: #181818;
+      color: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+    #game-area {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #222;
+      cursor: none;
+    }
+    #target {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid #ff3b3b;
+      background: rgba(255,59,59,.08);
+      box-shadow: 0 0 10px #ff6666;
+      z-index: 2;
+    }
+    #crosshair {
+      pointer-events: none;
+      position: absolute;
+      z-index: 5;
+      left: 0; top: 0;
+      width: 0; height: 0;
+      display: none;
+    }
+    #crosshair:after, #crosshair:before {
+      content: '';
+      position: absolute;
+      background: #fff;
+    }
+    #crosshair:after {
+      left: -16px; top: -1px;
+      width: 32px; height: 2px;
+    }
+    #crosshair:before {
+      left: -1px; top: -16px;
+      width: 2px; height: 32px;
+    }
+    #ui {
+      position: fixed;
+      top: 1em; left: 1em;
+      z-index: 10;
+      background: rgba(0,0,0,.6);
+      padding: .8em 1.2em;
+      border-radius: 10px;
+      font-size: 1.2em;
+      user-select: none;
+    }
+    #ui input {
+      width: 3em;
+      font-size: 1em;
+      text-align: right;
+    }
+    #result {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      color: #fff;
+      background: rgba(0,0,0,0.92);
+      padding: 2em 3em;
+      border-radius: 18px;
+      font-size: 2em;
+      display: none;
+      z-index: 20;
+      text-align: center;
+    }
+    button {
+      font-size: 1em;
+      background: #ff3b3b;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.2em 1.3em;
+      margin: 0.2em 0.5em;
+      cursor: pointer;
+    }
+    button:active { filter: brightness(0.93);}
+  </style>
+</head>
+<body>
+  <div id="game-area">
+    <div id="target"></div>
+    <div id="crosshair"></div>
+  </div>
+  <div id="ui">
+    得分: <span id="score">0</span>　
+    用时: <span id="time-left">30</span> 秒　
+    训练时长: <input type="number" id="setTime" min="10" max="300" value="30"> 秒
+    <button id="startBtn">开始</button>
+  </div>
+  <div id="result"></div>
+  <script>
+    const target = document.getElementById("target");
+    const scoreSpan = document.getElementById("score");
+    const timeLeftSpan = document.getElementById("time-left");
+    const setTimeInput = document.getElementById("setTime");
+    const startBtn = document.getElementById("startBtn");
+    const resultDiv = document.getElementById("result");
+    const crosshair = document.getElementById("crosshair");
+    const gameArea = document.getElementById("game-area");
+
+    let score = 0;
+    let gameTime = 30;
+    let gameTimer = null;
+    let timeLeft = 30;
+    let running = false;
+
+    function placeTarget() {
+      const pad = 30;
+      const maxX = window.innerWidth - target.offsetWidth - pad;
+      const maxY = window.innerHeight - target.offsetHeight - pad;
+      const x = Math.random() * maxX + pad/2;
+      const y = Math.random() * maxY + pad/2;
+      target.style.left = x + 'px';
+      target.style.top = y + 'px';
+    }
+
+    function startGame() {
+      score = 0;
+      gameTime = Number(setTimeInput.value) || 30;
+      timeLeft = gameTime;
+      scoreSpan.textContent = "0";
+      timeLeftSpan.textContent = gameTime;
+      resultDiv.style.display = "none";
+      running = true;
+      placeTarget();
+      target.style.display = "block";
+      startBtn.disabled = true;
+      setTimeInput.disabled = true;
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        timeLeftSpan.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          stopGame();
+        }
+      }, 1000);
+    }
+
+    function stopGame() {
+      running = false;
+      clearInterval(gameTimer);
+      target.style.display = "none";
+      startBtn.disabled = false;
+      setTimeInput.disabled = false;
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = `时间到！<br>你的命中数：<b>${score}</b><br><button onclick="window.location.reload()">再来一次</button>`;
+    }
+
+    // 命中目标
+    target.addEventListener("mousedown", function(e){
+      if (!running) return;
+      score++;
+      scoreSpan.textContent = score;
+      placeTarget();
+      e.stopPropagation();
+    });
+
+    // 显示与移动准星
+    gameArea.addEventListener("mousemove", function(e){
+      crosshair.style.display = "block";
+      crosshair.style.left = (e.clientX) + "px";
+      crosshair.style.top = (e.clientY) + "px";
+    });
+
+    // 点击区域无效命中（不算分）
+    gameArea.addEventListener("mousedown", function(e){
+      // nothing, just to prevent losing focus
+    });
+
+    // 隐藏准星
+    document.addEventListener("mouseleave", function(){
+      crosshair.style.display = "none";
+    });
+
+    // 启动游戏
+    startBtn.onclick = startGame;
+
+    // 禁止右键菜单
+    document.addEventListener("contextmenu", e => e.preventDefault());
+
+    // 初始位置
+    target.style.display = "none";
+
+    // 响应窗口变化随时修正靶心不出界
+    window.addEventListener("resize", ()=>{
+      if (running) placeTarget();
+    });
+  </script>
+</body>
+</html>

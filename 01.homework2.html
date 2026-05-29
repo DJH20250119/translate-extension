@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Music</title>
+    <style>
+        /* 基础样式美化 */
+        .my-table {
+            width: 100%;
+            max-width: 800px; /* 限制最大宽度 */
+            border-collapse: collapse; /* 合并边框 */
+            margin: 20px auto;
+        }
+
+        .my-table th{
+            border: 1px solid #000000; /* 单元格边框 */
+            padding: 10px;          /* 内边距 */
+            text-align: center;     /* 文字居中 */
+        }
+        .my-table td{
+            border: 1px solid #000000; /* 单元格边框 */
+            padding: 10px;          /* 内边距 */
+            text-align: center;     /* 文字居中 */
+        }
+    </style>
+</head>
+<body>
+
+    <table class="my-table">
+        <!-- 表头 (可选) -->
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>标题</th>
+                <th>歌手</th>
+                <th>时长</th>
+                <th>播放</th>
+            </tr>
+        </thead>
+        <!-- 表体 -->
+         <!-- 在插入音频中type="audio/mpeg"可以降低筛选复杂度，在制作网站时可以用 -->
+        <tbody>
+            <!-- 第 1 行 -->
+            <tr>
+                <td>1</td>
+                <td>唐人</td>
+                <td><a href = "https://baike.baidu.com/item/%E8%A6%83%E6%B2%90%E6%9B%A6/2582347?fr=aladdin" target = "_blank">覃沐曦</a></td>
+                <td>03:44</td>
+                <td>
+                    <audio controls>
+                        <source src="audio/唐人.mp3">
+                    </audio>
+                </td>
+            </tr>
+            <!-- 第 2 行 -->
+            <tr>
+                <td>2</td>
+                <td>漂洋过海来看你</td>
+                <td><a href = "https://baike.baidu.com/item/%E5%91%A8%E6%B7%B1/15089196?fr=aladdin" target = "_blank">周深</a></td>
+                <td>03:03</td>
+                <td>
+                    <audio controls>
+                        <source src="audio/漂洋过海来看你.mp3">
+                    </audio>
+                </td>
+            </tr>
+            <!-- 第 3 行 -->
+            <tr>
+                <td>3</td>
+                <td>小幸运</td>
+                <td><a href = "https://baike.baidu.com/item/%E7%94%B0%E9%A6%A5%E7%94%84?fromModule=lemma_search-box" target = "_blank">田馥甄</a></td>
+                <td>04:17</td>
+                <td>
+                    <audio controls>
+                        <source src="audio/小幸运.mp3">
+                    </audio>
+                </td>
+            </tr>
+            <!-- 第 4 行 -->
+            <tr>
+                <td>4</td>
+                <td>Excitant</td>
+                <td><a href = "https://baike.baidu.com/item/%E6%88%90%E9%A9%B0%E6%B4%8B?fromModule=lemma_search-box" target = "_blank">成驰洋</a></td>
+                <td>03:30</td>
+                <td>
+                    <audio controls>
+                        <source src="audio/Excitant.mp3">
+                    </audio>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
