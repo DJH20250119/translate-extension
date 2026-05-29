@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "划词翻译" },
+  "extDesc": { "message": "选中英文文本，使用 DeepSeek 翻译为中文" }
+}
